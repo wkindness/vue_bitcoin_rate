@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Router Sample</title>
+</head>
+<body>
+  <div id="app">
+    <router-link to="/top">Home</router-link> |
+    <router-link to="/users/123">ユーザ画面を表示</router-link> |
+    <router-link to="/users/123/profile">プロフィール</router-link> |
+    <router-link to="/users/123/history">履歴</router-link> |
+    <router-link to="/redirect">リダイレクトしてHomeへ</router-link> |
+    <router-link to="/alias">エイリアスでHome表示</router-link>
+    <router-view></router-view>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.6/dist/vue-router.min.js"></script>
+  <script>
+    const Top = {
+      template: `
+        <div class="top">
+          <h2>ここはHomeです</h2>
+        </div>
+      `
+    }
+    const User = {
+      template: `
+        <div class="user">
+          <h2>ユーザ{{ $route.params.userId }}</h2>
+          <router-view></router-view>
+        </div>
+      ` 
+    }
+    const Profile = {
+      template: `
+        <div class="profile">
+          <h2>ユーザ {{ $route.params.userId }} のプロフィール</h2>
+        </div>
+      `
+    }
+    const History = {
+      template: `
+        <div class="history">
+          <h2>ユーザ {{ $route.params.userId }} の履歴</h2>
+        </div>
+      `
+    }
+
+    const router = new VueRouter({
+      routes: [
+        {
+          name: 'home',
+          path: '/top',
+          component: Top,
+          alias: '/alias'
+        },
+        {
+          path: '/users/:userId',
+          component: User,
+          children: [
+            {
+              path: 'profile',
+              component: Profile
+            },
+            {
+              path: 'history',
+              component: History
+            }
+          ]
+        },
+        {
+          path: '/redirect',
+          redirect: { name : 'home' }
+        }
+      ]
+    })
+
+    const app = new Vue({
+      router
+    }).$mount('#app')
+  </script>
+
+  <style>
+    body {
+      background: #fcebb6;
+    }
+    h2 {
+      color: white;
+    }
+    .top {
+      background: #0e197c;
+      padding: 5px;
+    }
+    .user {
+      background: #5e412f;
+      padding: 5px;
+    }
+    .profile {
+      background: #78c0a8;
+      padding: 5px;
+    }
+    .history {
+      background: #f07818;
+      padding: 5px;
+    }
+  </style>
+</body>
+</html>
